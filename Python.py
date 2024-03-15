@@ -22,8 +22,4 @@ for fragment in fragments:
     print(fragment)
 
 
-CREATE OR REPLACE TYPE PredicateType AS OBJECT (
-    key VARCHAR2(100),
-    value VARCHAR2(100)
-);
-/
+
