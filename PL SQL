@@ -1,3 +1,9 @@
+CREATE OR REPLACE TYPE PredicateType AS OBJECT (
+    key VARCHAR2(100),
+    value VARCHAR2(100)
+);
+/
+
 CREATE OR REPLACE TYPE PredicateList AS TABLE OF PredicateType;
 /
 
