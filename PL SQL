@@ -1,0 +1,39 @@
+CREATE OR REPLACE TYPE PredicateList AS TABLE OF PredicateType;
+/
+
+CREATE OR REPLACE TYPE MinitermFragmentGenerator AS OBJECT (
+    predicates PredicateList,
+
+    CONSTRUCTOR FUNCTION MinitermFragmentGenerator (predicates_in PredicateList) RETURN SELF AS RESULT,
+
+    MEMBER FUNCTION generate_fragments RETURN VARCHAR2
+);
+/
+
+CREATE OR REPLACE TYPE BODY MinitermFragmentGenerator AS
+    CONSTRUCTOR FUNCTION MinitermFragmentGenerator (predicates_in PredicateList) RETURN SELF AS RESULT IS
+    BEGIN
+        self.predicates := predicates_in;
+        RETURN;
+    END;
+
+    MEMBER FUNCTION generate_fragments RETURN VARCHAR2 IS
+        fragments VARCHAR2(32767);
+    BEGIN
+        FOR i IN 1..self.predicates.COUNT LOOP
+            IF i != 1 THEN
+                fragments := fragments || ' AND ';
+            END IF;
+            fragments := fragments || '(';
+            FOR j IN 1..self.predicates(i).key.COUNT LOOP
+                IF j != 1 THEN
+                    fragments := fragments || ' AND ';
+                END IF;
+                fragments := fragments || self.predicates(i).key(j) || '=' || self.predicates(i).value(j);
+            END LOOP;
+            fragments := fragments || ')';
+        END LOOP;
+        RETURN fragments;
+    END;
+END;
+/
